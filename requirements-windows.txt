@@ -1,0 +1,4 @@
+fake-rpi
+opencv-python
+numpy
+mediapipe
