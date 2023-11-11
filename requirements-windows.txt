@@ -1,0 +1,3 @@
+fake-rpi
+opencv-python
+numpy
