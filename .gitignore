@@ -1,3 +1,7 @@
 venv/
+<<<<<<< HEAD
 .vscode/
 Support File/
+=======
+.vscode/
+>>>>>>> 77ea3385f50febccebd63388aab192cd8671da0a
