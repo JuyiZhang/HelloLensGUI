@@ -1,8 +1,4 @@
 fake-rpi
 opencv-python
-<<<<<<< HEAD
 numpy
 mediapipe
-=======
-numpy
->>>>>>> 77ea3385f50febccebd63388aab192cd8671da0a
