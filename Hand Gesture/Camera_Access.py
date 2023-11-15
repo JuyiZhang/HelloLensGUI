@@ -1,4 +1,5 @@
 from picamera2 import Picamera2
+from Hand_Gesture_Recognition import *
 
 picam2 = Picamera2()
 video_config = picam2.create_preview_configuration({"format":"RGB888","size": (640,480)})
@@ -8,5 +9,5 @@ picam2.start()
 
 while True:
     im = picam2.capture_array()
-    
+    init_recognize(im)
     
