@@ -18,6 +18,7 @@ def init_recognize(image_data):
     currentTime = int(time.time())
     with HandLandmarker.create_from_options(options) as landmarker:
         result = landmarker.detect(mp_image)
+        print(result)
         
     
 def recognize_result(result: HandLandmarkerResult, output_image: mp.Image, timestamp_ms: int):
@@ -25,5 +26,5 @@ def recognize_result(result: HandLandmarkerResult, output_image: mp.Image, times
     cv2.imshow("Image Processed", output_image)
     print(result)
     
-options = HandLandmarkerOptions(base_options=BaseOptions(model_asset_path = model_path), running_mode=VisionRunningMode.LIVE_STREAM)#, result_callback=recognize_result)
+options = HandLandmarkerOptions(base_options=BaseOptions(model_asset_path = model_path), running_mode=VisionRunningMode.IMAGE)#, result_callback=recognize_result)
 detector = vision.HandLandmarker.create_from_options(options)
