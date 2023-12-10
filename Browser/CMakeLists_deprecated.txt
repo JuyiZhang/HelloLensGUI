@@ -1,0 +1,28 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+
+set(PROJ_VERSION 0.0.1)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -rdynamic")
+set(WK_INCLUDE_DIRS "/usr/local/include/webkitgtk-4.1")
+set(SOUP_INCLUDE_DIRS "/usr/include/libsoup-3.0")
+set(SYMBOL_INCLUDE_DIRS "Symbol")
+set(INCLUDE_DIRS "")
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+pkg_check_modules(WK2 REQUIRED webkit2gtk-4.1)
+pkg_check_modules(SOUP REQUIRED libsoup-3.0)
+
+project(${PROJECT_NAME} C VERSION ${PROJ_VERSION})
+add_executable(${PROJECT_NAME} main.c)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${GTK3_LIBRARIES})
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE ${GTK3_CFLAGS_OTHER})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${GTK3_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${WK_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${SOUP_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${SYMBOL_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
+target_link_directories(${PROJECT_NAME} PRIVATE ${GTK3_LIBRARY_DIRS})
