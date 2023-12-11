@@ -1,4 +1,5 @@
 #include<gtk/gtk.h>
+#include<stdio.h>
 
 static void
 print_hello(GtkWidget *widget, gpointer data){
@@ -8,6 +9,8 @@ print_hello(GtkWidget *widget, gpointer data){
 static void
 activate(GtkApplication *app, gpointer user_data) {
     GtkWidget *window;
+    FILE *fp;
+    fp = fopen()
     GtkWidget *button;
     GtkWidget *button_box;
     window = gtk_application_window_new(app);
