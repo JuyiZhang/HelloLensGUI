@@ -27,9 +27,9 @@
 
 /* For brevity's sake, struct members are annotated where they are used. */
 enum hlwm_cursor_mode {
-	TINYWL_CURSOR_PASSTHROUGH,
-	TINYWL_CURSOR_MOVE,
-	TINYWL_CURSOR_RESIZE,
+	HLWM_CURSOR_PASSTHROUGH,
+	HLWM_CURSOR_MOVE,
+	HLWM_CURSOR_RESIZE,
 };
 
 struct hlwm_server {
@@ -392,10 +392,10 @@ static void process_cursor_resize(struct hlwm_server *server, uint32_t time) {
 
 static void process_cursor_motion(struct hlwm_server *server, uint32_t time) {
 	/* If the mode is non-passthrough, delegate to those functions. */
-	if (server->cursor_mode == TINYWL_CURSOR_MOVE) {
+	if (server->cursor_mode == HLWM_CURSOR_MOVE) {
 		process_cursor_move(server, time);
 		return;
-	} else if (server->cursor_mode == TINYWL_CURSOR_RESIZE) {
+	} else if (server->cursor_mode == HLWM_CURSOR_RESIZE) {
 		process_cursor_resize(server, time);
 		return;
 	}
@@ -480,7 +480,7 @@ static void server_cursor_button(struct wl_listener *listener, void *data) {
 			server->cursor->x, server->cursor->y, &surface, &sx, &sy);
 	if (event->state == WLR_BUTTON_RELEASED) {
 		/* If you released any buttons, we exit interactive move/resize mode. */
-		server->cursor_mode = TINYWL_CURSOR_PASSTHROUGH;
+		server->cursor_mode = HLWM_CURSOR_PASSTHROUGH;
 	} else {
 		/* Focus that client if the button was _pressed_ */
 		focus_view(view, surface);
@@ -619,7 +619,7 @@ static void begin_interactive(struct hlwm_view *view,
 	server->grabbed_view = view;
 	server->cursor_mode = mode;
 
-	if (mode == TINYWL_CURSOR_MOVE) {
+	if (mode == HLWM_CURSOR_MOVE) {
 		server->grab_x = server->cursor->x - view->x;
 		server->grab_y = server->cursor->y - view->y;
 	} else {
@@ -649,7 +649,7 @@ static void xdg_toplevel_request_move(
 	 * provided serial against a list of button press serials sent to this
 	 * client, to prevent the client from requesting this whenever they want. */
 	struct hlwm_view *view = wl_container_of(listener, view, request_move);
-	begin_interactive(view, TINYWL_CURSOR_MOVE, 0);
+	begin_interactive(view, HLWM_CURSOR_MOVE, 0);
 }
 
 static void xdg_toplevel_request_resize(
@@ -661,7 +661,7 @@ static void xdg_toplevel_request_resize(
 	 * client, to prevent the client from requesting this whenever they want. */
 	struct wlr_xdg_toplevel_resize_event *event = data;
 	struct hlwm_view *view = wl_container_of(listener, view, request_resize);
-	begin_interactive(view, TINYWL_CURSOR_RESIZE, event->edges);
+	begin_interactive(view, HLWM_CURSOR_RESIZE, event->edges);
 }
 
 static void server_new_xdg_surface(struct wl_listener *listener, void *data) {
