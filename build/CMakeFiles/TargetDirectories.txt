@@ -1,3 +1,0 @@
-/home/arkr/dev/HelloLensGUI/build/CMakeFiles/cmake_hello.dir
-/home/arkr/dev/HelloLensGUI/build/CMakeFiles/edit_cache.dir
-/home/arkr/dev/HelloLensGUI/build/CMakeFiles/rebuild_cache.dir
