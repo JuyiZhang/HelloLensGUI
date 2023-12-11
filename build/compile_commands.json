@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/arkr/dev/HelloLensGUI/build",
+  "command": "/usr/bin/aarch64-linux-gnu-gcc-12 -g -o CMakeFiles/cmake_hello.dir/src/main.c.o -c \"/home/arkr/dev/HelloLensGUI/Window Manager/src/main.c\"",
+  "file": "/home/arkr/dev/HelloLensGUI/Window Manager/src/main.c",
+  "output": "CMakeFiles/cmake_hello.dir/src/main.c.o"
+}
+]
