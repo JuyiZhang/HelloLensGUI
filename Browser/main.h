@@ -1,23 +1,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
-
-struct WKTab
-{
-    GtkWidget *tab_widget;
-    WebKitWebView *tab_view;
-    const gchar *tab_url;
-    GtkWidget *tab_title;
-    GtkWidget *tab_icon;
-    struct WKTab *next;
-    int tab_number;
-};
-
-struct WKTabList
-{
-    int tab_count;
-    struct WKTab *root;
-};
+#include <extension/data_manager/data_manager.h>
 
 enum LOAD_STATUS
 {
@@ -31,10 +15,13 @@ char *DEFAULT_URI = "http://acid3.acidtests.org/";
 struct WKTabList *tabs;
 struct WKTab *currentTab;
 int tab_number = 0;
+int current_display_tab_number = 0;
 enum LOAD_STATUS current_load_status = DONE;
 WebKitFaviconDatabase *favicon_database;
 bool startup = true;
 GtkCssProvider *provider = NULL;
+
+struct hldata_manager *data_manager;
 
 GtkWidget *vbox = NULL;
 GtkProgressBar *load_progress_bar = NULL;
@@ -48,23 +35,29 @@ GtkWidget *add_button = NULL;
 
 GtkWidget *hbox_tab = NULL;
 
-void wkview_new_tab(GtkWidget *widget, GdkEventButton *event, gpointer data);
-void wkview_go(GtkWidget *widget, GdkEventButton *event, gpointer data);
-void wkview_back(GtkWidget *widget, GdkEventButton *event, gpointer data);
-void wkview_forward(GtkWidget *widget, GdkEventButton *event, gpointer data);
-void wkview_refresh(GtkWidget *widget, GdkEventButton *event, gpointer data);
-void wkview_cancel(GtkWidget *widget, GdkEventButton *event, gpointer data);
-void wkview_tab_delete(GtkWidget *widget, GdkEventButton *event, gpointer data);
+void wkview_new_tab(GtkWidget *widget, gpointer data);
+void wkview_go(GtkWidget *widget, gpointer data);
+void wkview_back(GtkWidget *widget, gpointer data);
+void wkview_forward(GtkWidget *widget, gpointer data);
+void wkview_refresh(GtkWidget *widget, gpointer data);
+void wkview_cancel(GtkWidget *widget, gpointer data);
+void wkview_tab_delete(GtkWidget *widget, gpointer data);
 void wkview_tab_go(GtkWidget *widget, GdkEventButton *event, gpointer data);
 
-void wkview_add_tab();
-WebKitWebView *init_wkview();
+void wkview_tab_add(struct hl_session_state_list *session_state);
+void wkview_tab_init(struct WKTab *op_tab,struct hl_session_state_list *session_state);
+void wkview_tab_init_ui(struct WKTab *op_tab);
+WebKitWebView *wkview_tab_init_view(struct WKTab *op_tab, struct hl_session_state_list *session_state);
+void wkview_tab_update_display(struct WKTab *op_tab, WebKitWebView *web_view);
+struct WKTab *wkview_tab_list_remove_index(struct WKTabList *tab_list, int index);
+void wkview_tab_set_display(struct WKTab *tab);
+void wkview_set_settings(WebKitSettings *current_settings);
 void wkview_save_context(WebKitWebView *web_view);
 const gchar *smart_url_completion(const gchar *webview_url);
-struct WKTab *wkview_tab_list_remove_index(struct WKTabList *tab_list, int index);
-void wkview_set_tab_display(struct WKTab *tab);
 void cairo_surface_resize(cairo_surface_t *surface, int sizex, int sizey);
 void gtk_widget_set_css_classes(GtkWidget *widget, const gchar *class_name);
+
+GtkWidget *hl_button_new_from_icon_name(const gchar *icon_name, GtkIconSize size, GCallback click);
 
 void wkview_load_changed(WebKitWebView *web_view, WebKitLoadEvent load_event, gpointer user_data);
 void wkview_set_favicon(GObject* source_object, GAsyncResult* res, gpointer data);

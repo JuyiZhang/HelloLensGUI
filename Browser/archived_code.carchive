@@ -1,0 +1,45 @@
+// #region Changing Background Color
+gboolean supports_alpha = FALSE;
+/*static void screen_changed(GtkWidget *widget, GdkScreen *old_screen, gpointer userdata)
+{
+    // To check if the display supports alpha channels, get the visual
+    GdkScreen *screen = gtk_widget_get_screen(widget);
+    GdkVisual *visual = gdk_screen_get_rgba_visual(screen);
+
+    if (!visual)
+    {
+        g_print("Your screen does not support alpha channels!\n");
+        visual = gdk_screen_get_system_visual(screen);
+        supports_alpha = FALSE;
+    }
+    else
+    {
+        g_print("Your screen supports alpha channels!\n");
+        supports_alpha = TRUE;
+    }
+
+    gtk_widget_set_visual(widget, visual);
+}
+
+static gboolean draw(GtkWidget *widget, cairo_t *cr, gpointer userdata)
+{
+    cairo_save (cr);
+
+    if (supports_alpha)
+    {
+        cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 0); // transparent
+    }
+    else
+    {
+        cairo_set_source_rgb (cr, 1.0, 1.0, 1.0); // opaque white
+    }
+
+    // draw the background
+    cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
+    cairo_paint (cr);
+
+    cairo_restore (cr);
+
+    return FALSE;
+}
+*/// #endregion
