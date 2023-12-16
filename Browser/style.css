@@ -19,15 +19,82 @@
     transition: opacity 0.5s ease-in-out;
 }
 
-.wkview-load-progress-bar {
-    background-color: white;
-    color: green;
+.entry-text {
+    background: linear-gradient(120deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+    border-radius: 5px;
+    border: solid 1px rgba(255,255,255,0.7);
+}
+
+
+.wkview-url-entry {
+    border-radius: 5px;
+    border: none;
+    background: url("res/animation-progressbar.png");
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    animation: load 0.5s ease-out 1s 1 normal forwards;
+}
+
+.wkview-url-entry-start {
+    animation: start-anim 0.5s ease-out 0.1s 1 normal forwards;
+}
+.wkview-url-entry-start-cancel {
+    animation: start-anim 0.5s ease-out 0.1s 1 reverse forwards;
+}
+.wkview-url-entry-start-to-commit {
+    animation: load 0.5s ease-out 0.1s 1 normal forwards;
+}
+.wkview-url-entry-commit-to-finish {
+    animation: finish 0.5s ease-out 0.1s 1 normal forwards;
+}
+.wkview-url-entry-commit-to-cancel {
+    animation: load-cancel 0.5s ease-out 0.1s 1 reverse forwards;
 }
 
 .window-body {
-    background-color: rgba(255, 255, 255, 0);
+    /*background-color: rgba(255, 255, 255, 0);*/
 }
 
 .webview {
     border-radius: 5px;
+}
+
+@keyframes start-anim {
+    0% {
+        background-size: 0% 100%;
+    }
+    100% {
+        background-size: 20% 100%;
+    }
+}
+
+@keyframes load {
+    0% {
+        background-size: 20% 100%;
+    }
+    100% {
+        background-size: 80% 100%;
+    }
+}
+
+@keyframes load-cancel {
+    0% {
+        background-size: 80% 100%;
+    }
+    100% {
+        background-size: 0% 100%;
+    }
+}
+
+@keyframes finish {
+    0% {
+        background-size: 80% 100%;
+    }
+    90% {
+        background-size: 100% 100%;
+        opacity: 100%;
+    }
+    100% {
+        opacity: 0;
+    }
 }

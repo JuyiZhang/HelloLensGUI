@@ -1,1 +1,1 @@
-./Window\ Manager/hlwm_server
+./Window\ Manager/hlwm_source/hlwm -s ./Browser/main

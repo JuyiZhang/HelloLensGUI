@@ -1,5 +1,14 @@
 #include <main.h>
 
+// TODO
+// History Storing and Display -> Storing favicon
+// Restore Session Done
+// Bookmark System
+// URL Autocompletion/Search
+// Back/Forward History
+// Download
+// Animation
+
 // #region wkview action function
 void wkview_go(GtkWidget *widget, gpointer data)
 {
@@ -37,6 +46,15 @@ void wkview_refresh(GtkWidget *widget, gpointer data)
 void wkview_cancel(GtkWidget *widget, gpointer data)
 {
   webkit_web_view_stop_loading(webView);
+  if(current_view_state == START) {
+    gtk_widget_remove_css_classes(entry_container, "wkview-url-entry-start");
+    gtk_widget_add_css_classes(entry_container, "wkview-url-entry-start-to-cancel");
+  }
+  if(current_view_state == COMMIT) {
+    gtk_widget_remove_css_classes(entry_container, "wkview-url-entry-start-to-commit");
+    gtk_widget_add_css_classes(entry_container, "wkview-url-entry-commit-to-cancel");
+  }
+  current_view_state = CANCEL;
 }
 
 void wkview_tab_delete(GtkWidget *widget, gpointer data)
@@ -60,6 +78,11 @@ void wkview_tab_go(GtkWidget *widget, GdkEventButton *event, gpointer data)
   wkview_tab_set_display(current_tab_data);
 }
 
+void wkview_entry_focused (GtkWidget* widget, GtkDirectionType direction, gpointer user_data) {
+  g_print("Entry focused");
+  gtk_widget_grab_focus(widget);
+  gtk_editable_select_region(GTK_EDITABLE(widget),0,-1);
+}
 // #endregion
 
 // #region wkview helper function
@@ -97,8 +120,8 @@ void wkview_tab_init_ui(struct WKTab *op_tab){
   GtkWidget *tab_title = gtk_label_new("New Tab");
   GtkWidget *tab_icon = gtk_image_new();
   GtkWidget *tab_delete_button = gtk_button_new_from_icon_name("edit-delete", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_set_css_classes(new_tab, "button");
-  gtk_widget_set_css_classes(tab_delete_button, "button-layered");
+  gtk_widget_add_css_classes(new_tab, "button");
+  gtk_widget_add_css_classes(tab_delete_button, "button-layered");
   gtk_box_pack_start(GTK_BOX(new_tab), tab_icon, FALSE, TRUE, 5);
   gtk_box_pack_start(GTK_BOX(new_tab), tab_title, FALSE, TRUE, 5);
   gtk_box_pack_end(GTK_BOX(new_tab), tab_delete_button, FALSE, TRUE, 10);
@@ -260,12 +283,20 @@ void cairo_surface_resize(cairo_surface_t *surface, int sizex, int sizey)
   cairo_surface_set_device_scale(surface, sf, sf);
 }
 
-void gtk_widget_set_css_classes(GtkWidget *widget, const gchar *class_name)
+void gtk_widget_add_css_classes(GtkWidget *widget, const gchar *class_name)
 {
   GtkStyleContext *context;
   context = gtk_widget_get_style_context(widget);
   gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
   gtk_style_context_add_class(context, class_name);
+}
+
+void gtk_widget_remove_css_classes(GtkWidget *widget, const gchar *class_name)
+{
+  GtkStyleContext *context;
+  context = gtk_widget_get_style_context(widget);
+  gtk_style_context_add_provider(context, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+  gtk_style_context_remove_class(context, class_name);
 }
 // #endregion
 
@@ -276,22 +307,33 @@ void wkview_load_changed(WebKitWebView *web_view, WebKitLoadEvent load_event, gp
   switch (load_event)
   {
   case WEBKIT_LOAD_FINISHED:
-    gtk_progress_bar_set_fraction(load_progress_bar, 1.0);
-    current_load_status = DONE;
+    current_view_state = FINISH;
     gtk_widget_show(refresh_button);
     gtk_widget_hide(cancel_button);
     wkview_tab_update_display(op_tab, web_view);
     gtk_entry_set_text(GTK_ENTRY(entry), currentTab->tab_url);
+    gtk_widget_add_css_classes(entry_container, "wkview-url-entry-commit-to-finish");
+    gtk_widget_remove_css_classes(entry_container, "wkview-url-entry-start-to-commit");
     break;
   case WEBKIT_LOAD_STARTED:
     // gtk_widget_show(load_progress_bar);
-    gtk_progress_bar_set_fraction(load_progress_bar, 0.3);
-    current_load_status = IN_PROGRESS;
+    gtk_widget_add_css_classes(entry_container, "wkview-url-entry-start");
+    gtk_widget_remove_css_classes(entry_container, "wkview-url-entry-commit-to-finish");
+    gtk_widget_remove_css_classes(entry_container, "wkview-url-entry-commit-to-cancel");
+    gtk_widget_remove_css_classes(entry_container, "wkview-url-entry-start-to-cancel");
+    current_view_state = START;
     gtk_widget_hide(refresh_button);
     gtk_widget_show(cancel_button);
     break;
   case WEBKIT_LOAD_COMMITTED:
-    gtk_progress_bar_set_fraction(load_progress_bar, 0.6);
+    current_view_state = COMMIT;
+    gtk_widget_add_css_classes(entry_container, "wkview-url-entry-start-to-commit");
+    gtk_widget_remove_css_classes(entry_container, "wkview-url-entry-start");
+    break;
+  case WEBKIT_LOAD_REDIRECTED:
+    current_view_state = START;
+    gtk_widget_add_css_classes(entry_container, "wkview-url-entry-start");
+    gtk_widget_remove_css_classes(entry_container, "wkview-url-entry-commit-to-finish");
     break;
   default:
     break;
@@ -314,7 +356,7 @@ void wkview_set_favicon(GObject *source_object, GAsyncResult *res, gpointer data
 GtkWidget *hl_button_new_from_icon_name(const gchar *icon_name, GtkIconSize size, GCallback click) {
   GtkWidget *button_widget = gtk_button_new_from_icon_name(icon_name, size);
   g_signal_connect(G_OBJECT(button_widget), "clicked", click, NULL);
-  gtk_widget_set_css_classes(button_widget, "button");
+  gtk_widget_add_css_classes(button_widget, "button");
   return button_widget;
 }
 
@@ -345,6 +387,9 @@ void app_tab_init(){
     
     for(int i=0;i<data_manager->state_count;i++){
       wkview_tab_add(op_state);
+      if(i == data_manager->state_count - 1) {
+        gtk_entry_set_text(GTK_ENTRY(entry), op_state->state_url);
+      }
       op_state = op_state->next;
     }
     
@@ -359,6 +404,7 @@ void app_tab_init(){
 int main(int argc, char *argv[])
 {
   GtkWidget *win = NULL;
+  
 
   g_log_set_handler("Gtk", G_LOG_LEVEL_WARNING, (GLogFunc)gtk_false, NULL);
   gtk_init(&argc, &argv);
@@ -387,17 +433,28 @@ int main(int argc, char *argv[])
   go_button = hl_button_new_from_icon_name("go-jump", GTK_ICON_SIZE_LARGE_TOOLBAR, G_CALLBACK(wkview_go));
   refresh_button = hl_button_new_from_icon_name("view-refresh", GTK_ICON_SIZE_LARGE_TOOLBAR, G_CALLBACK(wkview_refresh));
   cancel_button = hl_button_new_from_icon_name("dialog-cancel", GTK_ICON_SIZE_LARGE_TOOLBAR, G_CALLBACK(wkview_cancel));
-  GtkWidget *vbox_address_input = gtk_box_new(TRUE, 0);
+  GtkWidget *vbox_address_input = gtk_overlay_new();
   entry = gtk_entry_new();
+  entry_container = gtk_box_new(FALSE, 0);
+  
   gtk_entry_set_text(GTK_ENTRY(entry), DEFAULT_URI);
   g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(wkview_go), (gpointer)win);
-  load_progress_bar = GTK_PROGRESS_BAR(gtk_progress_bar_new());
-  gtk_progress_bar_set_fraction(load_progress_bar, 0);
-  gtk_widget_set_css_classes(GTK_WIDGET(load_progress_bar), "wkview-load-progress-bar");
+  g_signal_connect(G_OBJECT(entry), "button-press-event", G_CALLBACK(wkview_entry_focused), NULL);
+  gtk_widget_add_css_classes(entry_container, "wkview-url-entry");
+  gtk_widget_add_css_classes(entry, "entry-text");
   // gtk_widget_hide(load_progress_bar);
 
-  gtk_box_pack_start(GTK_BOX(vbox_address_input), entry, TRUE, TRUE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox_address_input), GTK_WIDGET(load_progress_bar), FALSE, TRUE, 10);
+  
+  gtk_widget_set_valign(entry, GTK_ALIGN_FILL);
+  gtk_widget_set_halign(entry, GTK_ALIGN_FILL);
+  gtk_widget_set_valign(entry_container, GTK_ALIGN_FILL);
+  gtk_widget_set_halign(entry_container, GTK_ALIGN_FILL);
+  
+  gtk_overlay_add_overlay(GTK_OVERLAY(vbox_address_input), entry_container);
+  gtk_overlay_add_overlay(GTK_OVERLAY(vbox_address_input), entry);
+
+  gtk_widget_add_css_classes(vbox_address_input,"entry-background");
+
 
   hbox_address = gtk_box_new(FALSE, 10);
   gtk_box_pack_start(GTK_BOX(hbox_address), back_button, FALSE, TRUE, 0);
@@ -430,7 +487,7 @@ int main(int argc, char *argv[])
   gtk_window_set_default_size(GTK_WINDOW(win), 1280, 720);
   gtk_widget_show_all(win);
   app_tab_init();
-  gtk_widget_set_css_classes(win, "window-body");
+  gtk_widget_add_css_classes(win, "window-body");
   gtk_main();
   return 0;
 }

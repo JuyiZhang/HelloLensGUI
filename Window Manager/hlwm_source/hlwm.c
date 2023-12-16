@@ -537,12 +537,18 @@ static void server_new_output(struct wl_listener *listener, void *data) {
 	/* Configures the output created by the backend to use our allocator
 	 * and our renderer. Must be done once, before commiting the output */
 	wlr_output_init_render(wlr_output, server->allocator, server->renderer);
-
+	wlr_log(WLR_INFO, "Initiating Output Render");
 	/* Some backends don't have modes. DRM+KMS does, and we need to set a mode
 	 * before we can use the output. The mode is a tuple of (width, height,
 	 * refresh rate), and each monitor supports only a specific set of modes. We
 	 * just pick the monitor's preferred mode, a more sophisticated compositor
 	 * would let the user configure it. */
+	struct wl_list *output_mode_list = &wlr_output->modes;
+	wlr_log(WLR_INFO, "Length of output mode is %d", wl_list_length(output_mode_list));
+	struct wlr_output_mode *mode;
+	wl_list_for_each(mode, output_mode_list, link){
+		wlr_log(WLR_INFO, "Output Mode of %d x %d at refresh rate of %d", mode->width, mode->height, mode->refresh);
+	}
 	if (!wl_list_empty(&wlr_output->modes)) {
 		struct wlr_output_mode *mode = wlr_output_preferred_mode(wlr_output);
 		wlr_output_set_mode(wlr_output, mode);

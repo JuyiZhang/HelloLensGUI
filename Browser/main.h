@@ -9,9 +9,17 @@ enum LOAD_STATUS
     IN_PROGRESS
 };
 
+enum VIEW_STATE {
+    START,
+    COMMIT,
+    FINISH,
+    CANCEL
+};
+
 WebKitWebView *webView = NULL;
 GtkWidget *entry = NULL;
 char *DEFAULT_URI = "http://acid3.acidtests.org/";
+enum VIEW_STATE current_view_state = FINISH;
 struct WKTabList *tabs;
 struct WKTab *currentTab;
 int tab_number = 0;
@@ -25,6 +33,7 @@ struct hldata_manager *data_manager;
 
 GtkWidget *vbox = NULL;
 GtkProgressBar *load_progress_bar = NULL;
+GtkWidget *entry_container = NULL;
 
 GtkWidget *go_button = NULL;
 GtkWidget *back_button = NULL;
@@ -43,6 +52,7 @@ void wkview_refresh(GtkWidget *widget, gpointer data);
 void wkview_cancel(GtkWidget *widget, gpointer data);
 void wkview_tab_delete(GtkWidget *widget, gpointer data);
 void wkview_tab_go(GtkWidget *widget, GdkEventButton *event, gpointer data);
+void wkview_entry_focused (GtkWidget* widget, GtkDirectionType direction, gpointer user_data);
 
 void wkview_tab_add(struct hl_session_state_list *session_state);
 void wkview_tab_init(struct WKTab *op_tab,struct hl_session_state_list *session_state);
@@ -55,7 +65,8 @@ void wkview_set_settings(WebKitSettings *current_settings);
 void wkview_save_context(WebKitWebView *web_view);
 const gchar *smart_url_completion(const gchar *webview_url);
 void cairo_surface_resize(cairo_surface_t *surface, int sizex, int sizey);
-void gtk_widget_set_css_classes(GtkWidget *widget, const gchar *class_name);
+void gtk_widget_add_css_classes(GtkWidget *widget, const gchar *class_name);
+void gtk_widget_remove_css_classes(GtkWidget *widget, const gchar *class_name);
 
 GtkWidget *hl_button_new_from_icon_name(const gchar *icon_name, GtkIconSize size, GCallback click);
 
