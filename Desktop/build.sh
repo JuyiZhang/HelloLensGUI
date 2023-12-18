@@ -1,1 +1,1 @@
-gcc -I. `pkg-config --cflags gtk+-3.0` main.c -o main `pkg-config --libs gtk+-3.0`
+gcc -I. `pkg-config --cflags gtk+-3.0` main.c extension/desktop_data_manager/desktop_data_manager.c extension/widget_element_manager/widget_element_manager.c -o main `pkg-config --libs gtk+-3.0`

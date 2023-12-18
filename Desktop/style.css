@@ -1,0 +1,32 @@
+.widget-1-1 {
+    background: url('res/backplate/Glass_256.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.widget-2-1 {
+    background: url('res/backplate/Glass_256_Wide.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.widget-2-2 {
+    background: url('res/backplate/Glass_512.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.widget-4-2 {
+    background: url('res/backplate/Glass_512_Wide.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.widget-label {
+    color: #fff;
+    text-shadow: 0px 0px 10px #666;
+}
+
+.body {
+    background: url("res/background/bg.jpg");
+}
