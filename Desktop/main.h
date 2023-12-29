@@ -12,5 +12,5 @@ void gtk_widget_add_css_classes(GtkWidget *widget, const gchar *class_name);
 void scroll_layout_generate(GtkWidget *parent);
 void exec_action(GtkWidget *widget, GdkEventButton *event, gpointer data);
 void hl_desktop_widget_add_with_size(GtkWidget *parent_grid, GtkWidget *child_widget, int x, int y, int width, int height);
-void hl_desktop_icon_size_cfg(GtkWidget *widget, struct widget_data *data, int height);
+void hl_desktop_icon_size_cfg(GtkWidget *widget, struct widget_data *data, int width, int height);
 void hl_widget_add_bg(GtkWidget *widget, int width, int height);

@@ -1,32 +1,48 @@
 .widget-1-1 {
-    background: url('res/backplate/Glass_256.png');
-    background-size: contain;
+    background: url('res/backplate/Glass_1_1.png');
     background-repeat: no-repeat;
+    background-position: center;
+    animation: init 0.5s ease-out 1 normal forwards;
 }
 
 .widget-2-1 {
-    background: url('res/backplate/Glass_256_Wide.png');
-    background-size: contain;
+    background: url('res/backplate/Glass_2_1.png');
     background-repeat: no-repeat;
+    background-position: center;
+    animation: init 0.5s ease-out 1 normal forwards;
 }
 
 .widget-2-2 {
-    background: url('res/backplate/Glass_512.png');
-    background-size: contain;
+    background: url('res/backplate/Glass_2_2.png');
     background-repeat: no-repeat;
+    background-position: center;
+    animation: init 0.5s ease-out 1 normal forwards;
 }
 
 .widget-4-2 {
-    background: url('res/backplate/Glass_512_Wide.png');
-    background-size: contain;
+    background: url('res/backplate/Glass_4_2.png');
     background-repeat: no-repeat;
+    background-position: center;
+    animation: init 0.5s ease-out 1 normal forwards;
 }
 
 .widget-label {
     color: #fff;
-    text-shadow: 0px 0px 10px #666;
+    text-shadow: 0px 0px 6px #222;
+    font-size: 1.2em;
 }
 
 .body {
     background: url("res/background/bg.jpg");
+}
+
+@keyframes init {
+    0% {
+        opacity: 0;
+        background-size: 60% 60%;
+    }
+    100% {
+        opacity: 1;
+        background-size: 100% 100%;
+    }
 }

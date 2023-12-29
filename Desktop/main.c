@@ -59,7 +59,7 @@ void scroll_layout_generate(GtkWidget *parent)
         switch (widget_to_create->type)
         {
         case 'i': // Icon
-            hl_desktop_icon_size_cfg(widget_parent, widget_to_create->data, widget_to_create->height);
+            hl_desktop_icon_size_cfg(widget_parent, widget_to_create->data, widget_to_create->width, widget_to_create->height);
             break;
         default:
             break;
@@ -77,15 +77,17 @@ void scroll_layout_generate(GtkWidget *parent)
 
 void hl_widget_add_bg(GtkWidget *widget, int width, int height) {
     char bg_name[32];
-    sprintf(bg_name,"res/backplate/Glass_%d_%d.png",width,height);
+    sprintf(bg_name,"widget-%d-%d",width,height);
+    gtk_widget_add_css_classes(widget, bg_name);
+    /*sprintf(bg_name,"res/backplate/Glass_%d_%d.png",width,height);
     //g_print("Adding background with name: %s\n", bg_name);
     GtkWidget *bg_image = gtk_image_new_from_file(bg_name);
     gtk_widget_set_halign(bg_image,GTK_ALIGN_FILL);
     gtk_widget_set_valign(bg_image,GTK_ALIGN_FILL);
-    gtk_overlay_add_overlay(GTK_OVERLAY(widget), bg_image);
+    gtk_overlay_add_overlay(GTK_OVERLAY(widget), bg_image);*/
 }
 
-void hl_desktop_icon_size_cfg(GtkWidget *widget, struct widget_data *data, int height){
+void hl_desktop_icon_size_cfg(GtkWidget *widget, struct widget_data *data, int width, int height){
     
     int icon_height = height * screen_scale_factor;
 
@@ -100,6 +102,7 @@ void hl_desktop_icon_size_cfg(GtkWidget *widget, struct widget_data *data, int h
         g_print("Failed to find file, fall back to absolute directory");
         logo_str_full = data->location;
     }
+    GtkWidget *background_widget = gtk_image_new();
     GtkWidget *icon_widget = gtk_image_new_from_file(logo_str_full);
     GtkWidget *title = gtk_label_new(data->name);
     GtkWidget *icon_event_box = gtk_event_box_new();
@@ -116,7 +119,9 @@ void hl_desktop_icon_size_cfg(GtkWidget *widget, struct widget_data *data, int h
     gtk_widget_set_valign(title, GTK_ALIGN_END);
     gtk_widget_set_margin_end(title, 30);
     gtk_widget_set_margin_bottom(title, 30);
-    
+
+    hl_widget_add_bg(icon_event_box, width, height);
+
     gtk_overlay_add_overlay(GTK_OVERLAY(widget), icon_event_box);
     gtk_overlay_add_overlay(GTK_OVERLAY(widget), title);
     
